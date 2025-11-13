@@ -1,17 +1,32 @@
+/**
+ * Core inputs used by the Shopify churn cost calculator.
+ */
 export interface CalculatorInputs {
   averageOrderValue: number
-  subscriptionsPerMonth: number
-  activeCustomers: number
-  churnRatePercentage: number
-  retentionLiftPercentage?: number
+  numberOfCustomers: number
+  purchaseFrequency: number
+  churnRate: number
+  customerAcquisitionCost?: number
+  grossMargin?: number
 }
 
+/**
+ * Projected savings for a specific churn reduction scenario.
+ */
+export interface ChurnScenario {
+  reductionPercentage: number
+  annualSavings: number
+  threeYearSavings: number
+}
+
+/**
+ * Result payload returned by the churn calculator utilities.
+ */
 export interface CalculatorResults {
-  monthlyLostRevenue: number
-  annualLostRevenue: number
-  monthlyRecoveredRevenue: number
-  annualRecoveredRevenue: number
-  recoveredCustomersPerMonth: number
+  annualRevenueLost: number
+  lifetimeValueLost: Record<number, number>
+  replacementCost: number
+  reducedChurnScenarios: ChurnScenario[]
 }
 
 export interface LeadCapturePayload {
