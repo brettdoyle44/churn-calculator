@@ -1,8 +1,7 @@
-import { Dialog, Transition } from '@headlessui/react'
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion'
-import type { FC, ReactNode } from 'react'
+import type { FC } from 'react'
 import CountUp from 'react-countup'
-import { Fragment, useId, useMemo, useRef, useState } from 'react'
+import { useId, useMemo, useRef } from 'react'
 import {
   Bar,
   BarChart,
@@ -107,7 +106,6 @@ type ComparisonStat = {
 }
 
 const ResultsDisplay: FC<ResultsDisplayProps> = ({ results }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const prefersReducedMotion = useReducedMotion()
   const lossGradientId = useId()
 
@@ -171,9 +169,6 @@ const ResultsDisplay: FC<ResultsDisplayProps> = ({ results }) => {
       ],
     }
   }, [results])
-
-  const openModal = () => setIsModalOpen(true)
-  const closeModal = () => setIsModalOpen(false)
 
   return (
     <>
@@ -402,15 +397,20 @@ const ResultsDisplay: FC<ResultsDisplayProps> = ({ results }) => {
                   <p className="text-sm text-sky-100/75 sm:text-base">
                     Get a tailored churn reduction roadmap delivered straight to your inbox.
                   </p>
-                  <motion.button
-                    type="button"
-                    onClick={openModal}
-                    className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-500 px-10 py-4 text-sm font-semibold text-white shadow-lg transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-200 hover:scale-[1.03]"
-                    whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
-                    whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                  >
-                    Get My Free Churn Reduction Strategy
-                  </motion.button>
+                  <EmailCapture
+                    context="results_cta"
+                    trigger={({ open }) => (
+                      <motion.button
+                        type="button"
+                        onClick={open}
+                        className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-500 px-10 py-4 text-sm font-semibold text-white shadow-lg transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-200 hover:scale-[1.03]"
+                        whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
+                        whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+                      >
+                        Get My Free Churn Reduction Strategy
+                      </motion.button>
+                    )}
+                  />
                 </div>
               </motion.div>
             </motion.div>
@@ -434,68 +434,9 @@ const ResultsDisplay: FC<ResultsDisplayProps> = ({ results }) => {
           )}
         </AnimatePresence>
       </motion.section>
-
-      <LeadCaptureModal open={isModalOpen} onClose={closeModal}>
-        <EmailCapture />
-      </LeadCaptureModal>
     </>
   )
 }
-
-type LeadCaptureModalProps = {
-  open: boolean
-  onClose: () => void
-  children: ReactNode
-}
-
-const LeadCaptureModal: FC<LeadCaptureModalProps> = ({ open, onClose, children }) => (
-  <Transition show={open} as={Fragment}>
-    <Dialog as="div" className="relative z-50" onClose={onClose}>
-      <Transition.Child
-        as={Fragment}
-        enter="transition-opacity duration-300"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="transition-opacity duration-200"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-      >
-        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm" />
-      </Transition.Child>
-
-      <div className="fixed inset-0 overflow-y-auto">
-        <div className="flex min-h-full items-center justify-center p-4">
-          <Transition.Child
-            as={Fragment}
-            enter="transition-transform duration-300"
-            enterFrom="translate-y-6 opacity-0 scale-95"
-            enterTo="translate-y-0 opacity-100 scale-100"
-            leave="transition-transform duration-200"
-            leaveFrom="translate-y-0 opacity-100 scale-100"
-            leaveTo="translate-y-6 opacity-0 scale-95"
-          >
-            <Dialog.Panel className="w-full max-w-lg rounded-3xl border border-white/10 bg-slate-900/80 p-6 shadow-2xl backdrop-blur-xl">
-              <Dialog.Title className="text-lg font-semibold text-white">
-                Get your personalized churn reduction strategy
-              </Dialog.Title>
-              <Dialog.Description className="mt-2 text-sm text-slate-200/80">
-                Drop your email and we&apos;ll deliver a playbook tailored to your metrics.
-              </Dialog.Description>
-              <div className="mt-6">{children}</div>
-              <button
-                type="button"
-                onClick={onClose}
-                className="mt-6 inline-flex items-center rounded-full border border-white/20 px-5 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white/70 transition hover:border-white/40 hover:text-white"
-              >
-                Close
-              </button>
-            </Dialog.Panel>
-          </Transition.Child>
-        </div>
-      </div>
-    </Dialog>
-  </Transition>
-)
 
 export default ResultsDisplay
 

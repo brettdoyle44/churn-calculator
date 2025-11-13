@@ -60,7 +60,25 @@ function App() {
                 Personalized roadmap delivered straight to your inbox
               </div>
             </div>
-            <EmailCapture />
+            <EmailCapture
+              context="hero_cta"
+              trigger={({ open }) => (
+                <div className="w-full rounded-2xl border border-white/10 bg-white/10 p-4 shadow-lg backdrop-blur">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <div className="flex-1 text-sm text-slate-200/80">
+                      Ready for the full breakdown? Get the detailed churn report and retention playbook.
+                    </div>
+                    <button
+                      type="button"
+                      onClick={open}
+                      className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-300/60 hover:scale-[1.02]"
+                    >
+                      Get The Full Report
+                    </button>
+                  </div>
+                </div>
+              )}
+            />
             <p className="text-xs text-slate-400">
               We respect your inbox. Get the churn insights instantly—unsubscribe any time.
             </p>
