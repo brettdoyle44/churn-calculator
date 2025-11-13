@@ -1,9 +1,30 @@
-import CalculatorForm from './components/CalculatorForm'
+import { useState } from 'react'
+
+import CalculatorForm, { type CalculatorFormData } from './components/CalculatorForm'
 import EmailCapture from './components/EmailCapture'
 import ProgressIndicator from './components/ProgressIndicator'
 import ResultsDisplay from './components/ResultsDisplay'
+import { calculateCalculatorResults } from './utils/calculations'
+import type { CalculatorResults } from './types/calculator.types'
 
 function App() {
+  const [results, setResults] = useState<CalculatorResults | null>(null)
+
+  const handleCalculate = (data: CalculatorFormData) => {
+    const churnRate = data.currentChurnRate ?? 75
+
+    const computedResults = calculateCalculatorResults({
+      averageOrderValue: data.averageOrderValue,
+      numberOfCustomers: data.totalCustomers,
+      purchaseFrequency: data.purchaseFrequency,
+      churnRate,
+      customerAcquisitionCost: data.customerAcquisitionCost,
+      grossMargin: data.grossMargin,
+    })
+
+    setResults(computedResults)
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="pointer-events-none fixed inset-0 -z-10">
@@ -55,7 +76,7 @@ function App() {
               Add your current revenue metrics, churn rate, and retention initiatives to see where
               the leaks are—and how much more you could capture with targeted improvements.
             </p>
-            <CalculatorForm />
+            <CalculatorForm onCalculate={handleCalculate} />
           </div>
           <div className="flex flex-col gap-6">
             <h2 className="text-2xl font-semibold text-white">Preview your results</h2>
@@ -63,7 +84,7 @@ function App() {
               We will visualize lost revenue, recovered growth scenarios, and recommended actions.
               Save the full playbook as a PDF or sync it to your CRM when you are ready.
             </p>
-            <ResultsDisplay />
+            <ResultsDisplay results={results} />
           </div>
         </section>
       </main>
