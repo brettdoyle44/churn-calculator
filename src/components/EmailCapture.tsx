@@ -9,7 +9,6 @@ import { submitLeadCapture } from '../utils/hubspot'
 type EmailCaptureFormValues = {
   email: string
   storeName: string
-  shopifyUrl?: string
   retentionChallenge?: string
 }
 
@@ -34,9 +33,6 @@ type EmailCaptureProps = {
 const EMAIL_REGEX =
   // RFC 5322 compliant enough for UI validation
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-const URL_REGEX =
-  /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-./?%&=]*)?$/i
 
 const confettiPalette = ['#38bdf8', '#f97316', '#22c55e', '#c084fc', '#facc15']
 
@@ -91,7 +87,6 @@ const EmailCapture: FC<EmailCaptureProps> = ({ trigger, context = 'email_capture
     defaultValues: {
       email: '',
       storeName: '',
-      shopifyUrl: '',
       retentionChallenge: '',
     },
   })
@@ -139,16 +134,6 @@ const EmailCapture: FC<EmailCaptureProps> = ({ trigger, context = 'email_capture
     setValueAs: (value) => (typeof value === 'string' ? value.trim() : value),
   })
 
-  const shopifyUrlField = register('shopifyUrl', {
-    setValueAs: (value) => (typeof value === 'string' ? value.trim() : value),
-    validate: (value) => {
-      if (!value) {
-        return true
-      }
-      return URL_REGEX.test(value) || 'Enter a valid URL.'
-    },
-  })
-
   const retentionField = register('retentionChallenge', {
     setValueAs: (value) => (typeof value === 'string' ? value.trim() : value),
   })
@@ -164,7 +149,6 @@ const EmailCapture: FC<EmailCaptureProps> = ({ trigger, context = 'email_capture
         company: values.storeName,
         metadata: {
           source: context,
-          shopifyStoreUrl: values.shopifyUrl || undefined,
           retentionChallenge: values.retentionChallenge || undefined,
         },
       })
@@ -364,26 +348,6 @@ const EmailCapture: FC<EmailCaptureProps> = ({ trigger, context = 'email_capture
                             {errors.storeName && (
                               <p className="text-xs font-medium text-rose-300">
                                 {errors.storeName.message}
-                              </p>
-                            )}
-                          </div>
-
-                          <div className="flex flex-col gap-2">
-                            <label htmlFor="shopifyUrl" className="text-sm font-medium text-slate-200">
-                              Shopify Store URL <span className="text-slate-400">(optional)</span>
-                            </label>
-                            <input
-                              id="shopifyUrl"
-                              type="url"
-                              inputMode="url"
-                              className="w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-400 focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-400/40"
-                              placeholder="https://yourstore.myshopify.com"
-                              {...shopifyUrlField}
-                              aria-invalid={Boolean(errors.shopifyUrl)}
-                            />
-                            {errors.shopifyUrl && (
-                              <p className="text-xs font-medium text-rose-300">
-                                {errors.shopifyUrl.message}
                               </p>
                             )}
                           </div>
